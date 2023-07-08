@@ -1,5 +1,6 @@
 import "./styles/game-board.css";
 import { Images } from "../../assets/Images";
+import { useState } from "react";
 
 const initialFishes = [
   {
@@ -21,7 +22,17 @@ const initialFishes = [
 ];
 
 export function FunctionalGameBoard() {
-  const nextFishToName = initialFishes[0];
+  const [fishIndex, setFishIndex] = useState(0);
+
+  const nextFishToName = initialFishes[fishIndex];
+
+  //disabeler
+  const isLast = fishIndex === initialFishes.length - 1;
+
+  const submitFishName = () => {
+    setFishIndex(fishIndex + 1);
+  };
+
   return (
     <div id="game-board">
       <div id="fish-container">
@@ -30,7 +41,14 @@ export function FunctionalGameBoard() {
       <form id="fish-guess-form">
         <label htmlFor="fish-guess">What kind of fish is this?</label>
         <input type="text" name="fish-guess" />
-        <input type="submit" />
+        <input
+          onClick={(e) => {
+            e.preventDefault();
+            submitFishName();
+          }}
+          disabled={isLast}
+          type="submit"
+        />
       </form>
     </div>
   );
