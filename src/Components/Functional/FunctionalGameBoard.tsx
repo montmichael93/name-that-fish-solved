@@ -23,13 +23,16 @@ const initialFishes = [
 
 export function FunctionalGameBoard() {
   const [fishIndex, setFishIndex] = useState(0);
-
   const nextFishToName = initialFishes[fishIndex];
-
+  const [fishNmaeInput, setFishInput] = useState("");
   //disabeler
   const isLast = fishIndex === initialFishes.length - 1;
 
   const submitFishName = () => {
+    alert(fishNmaeInput);
+  };
+
+  const getNexFish = () => {
     setFishIndex(fishIndex + 1);
   };
 
@@ -40,11 +43,18 @@ export function FunctionalGameBoard() {
       </div>
       <form id="fish-guess-form">
         <label htmlFor="fish-guess">What kind of fish is this?</label>
-        <input type="text" name="fish-guess" />
+        <input
+          onChange={(e) => {
+            setFishInput(e.target.value);
+          }}
+          type="text"
+          name="fish-guess"
+        />
         <input
           onClick={(e) => {
             e.preventDefault();
             submitFishName();
+            getNexFish();
           }}
           disabled={isLast}
           type="submit"

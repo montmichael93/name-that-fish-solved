@@ -24,18 +24,21 @@ const initialFishes = [
 export class ClassGameBoard extends Component {
   state = {
     count: 0,
+    input: "",
   };
+
   submitFishName = () => {
+    alert(this.state.input);
+  };
+  getNexFish = () => {
     this.setState({ count: this.state.count + 1 });
   };
 
   render() {
     const nextFishToName = initialFishes[this.state.count];
-    //const [fishIndex, setFishIndex] = nextFishToName;
+    //const [fishNameInput, setFishInput] = this.state.input;
     //disabeler
     const isLast = this.state.count === initialFishes.length - 1;
-
-    //const [fishIndex, setFishIndex] = nextFishToName;
 
     return (
       <div id="game-board">
@@ -44,11 +47,18 @@ export class ClassGameBoard extends Component {
         </div>
         <form id="fish-guess-form">
           <label htmlFor="fish-guess">What kind of fish is this?</label>
-          <input type="text" name="fish-guess" />
+          <input
+            onChange={(e) => {
+              this.state.input = e.target.value;
+            }}
+            type="text"
+            name="fish-guess"
+          />
           <input
             onClick={(e) => {
               e.preventDefault();
               this.submitFishName();
+              this.getNexFish();
             }}
             disabled={isLast}
             type="submit"
