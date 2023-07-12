@@ -6,6 +6,8 @@ const correctCount = 0;
 const answersLeft = ["trout", "salmon", "tuna", "shark"];
 
 export function FunctionalScoreBoard() {
+  //const [fishIndex, setFishIndex] = useState(0);
+  //const nextFishToName = answersLeft[fishIndex];
   return (
     <div id="score-board">
       <div>Incorrect 🔻: {incorrectCount}</div>
