@@ -1,6 +1,7 @@
-import { Component } from "react";
 import "./styles/game-board.css";
 import { Images } from "../../assets/Images";
+import { Component } from "react";
+import { isClassFishNameCorrect } from "../../types";
 
 const initialFishes = [
   {
@@ -21,25 +22,26 @@ const initialFishes = [
   },
 ];
 
-type userFishSubmission = {
-  fishNameInput: string;
-};
-
 export class ClassGameBoard extends Component<{
-  handleFishInput: (info: userFishSubmission) => void;
+  handleFishInput: (info: isClassFishNameCorrect) => void;
 }> {
   state = {
-    count: 0,
-    input: "",
+    fishIndex: 0,
+    SubmittedfishName: "",
+    correctCount: 0,
+    incorrectCount: 0,
   };
 
   getNexFish = () => {
-    this.setState({ count: this.state.count + 1 });
+    const isLast = this.state.fishIndex === initialFishes.length - 1;
+    isLast
+      ? this.setState({ fishIndex: this.state.fishIndex })
+      : this.setState({ fishIndex: this.state.fishIndex + 1 });
+    this.setState({ SubmittedfishName: (this.state.SubmittedfishName = "") });
   };
 
   render() {
-    const nextFishToName = initialFishes[this.state.count];
-    const isLast = this.state.count === initialFishes.length - 1;
+    const nextFishToName = initialFishes[this.state.fishIndex];
     return (
       <div id="game-board">
         <div id="fish-container">
@@ -48,12 +50,9 @@ export class ClassGameBoard extends Component<{
         <form id="fish-guess-form">
           <label htmlFor="fish-guess">What kind of fish is this?</label>
           <input
-            value={this.state.input}
+            value={this.state.SubmittedfishName}
             onChange={(e) => {
-              this.setState({ input: e.target.value });
-              this.props.handleFishInput({
-                fishNameInput: this.state.input,
-              });
+              this.setState({ SubmittedfishName: e.target.value });
             }}
             type="text"
             name="fish-guess"
@@ -61,9 +60,27 @@ export class ClassGameBoard extends Component<{
           <input
             onClick={(e) => {
               e.preventDefault();
+              if (this.state.SubmittedfishName === nextFishToName.name) {
+                this.setState({ correctCount: (this.state.correctCount += 1) });
+                this.props.handleFishInput({
+                  checkUserInput: [
+                    this.state.correctCount,
+                    this.state.incorrectCount,
+                  ],
+                });
+              } else if (this.state.SubmittedfishName != nextFishToName.name) {
+                this.setState({
+                  incorrectCount: (this.state.incorrectCount += 1),
+                });
+                this.props.handleFishInput({
+                  checkUserInput: [
+                    this.state.correctCount,
+                    this.state.incorrectCount,
+                  ],
+                });
+              }
               this.getNexFish();
             }}
-            disabled={isLast}
             type="submit"
           />
         </form>

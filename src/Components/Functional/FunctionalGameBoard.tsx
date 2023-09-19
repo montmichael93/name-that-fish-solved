@@ -1,6 +1,7 @@
 import "./styles/game-board.css";
 import { Images } from "../../assets/Images";
 import { useState } from "react";
+import { isFunctionalFishNameCorrect } from "../../types";
 
 const initialFishes = [
   {
@@ -21,24 +22,20 @@ const initialFishes = [
   },
 ];
 
-export type userFishSubmission = {
-  fishNameInput: string;
-};
-
 export function FunctionalGameBoard({
   handleFishInput,
 }: {
-  handleFishInput: (info: userFishSubmission) => void;
+  handleFishInput: (info: isFunctionalFishNameCorrect) => void;
 }) {
-  //fish Images
   const [fishIndex, setFishIndex] = useState(0);
   const nextFishToName = initialFishes[fishIndex];
-  const [fishNames, setFishInput] = useState("");
-  //disabeler
+  const [SubmittedfishName, setFishInput] = useState("");
+  const [userResults, setUserResults] = useState(0);
   const isLast = fishIndex === initialFishes.length - 1;
 
   const getNexFish = () => {
-    setFishIndex(fishIndex + 1);
+    isLast ? setFishIndex(fishIndex) : setFishIndex(fishIndex + 1);
+    setFishInput("");
   };
 
   return (
@@ -49,12 +46,9 @@ export function FunctionalGameBoard({
       <form id="fish-guess-form">
         <label htmlFor="fish-guess">What kind of fish is this?</label>
         <input
-          value={fishNames}
+          value={SubmittedfishName}
           onChange={(e) => {
             setFishInput(e.target.value);
-            handleFishInput({
-              fishNameInput: fishNames,
-            });
           }}
           type="text"
           name="fish-guess"
@@ -62,9 +56,29 @@ export function FunctionalGameBoard({
         <input
           onClick={(e) => {
             e.preventDefault();
+            if (SubmittedfishName === nextFishToName.name && !isLast) {
+              setUserResults(userResults + 1);
+
+              handleFishInput({
+                checkUserInput: true,
+              });
+            } else if (SubmittedfishName != nextFishToName.name && !isLast) {
+              handleFishInput({
+                checkUserInput: false,
+              });
+            }
+            const allFishes = initialFishes.map((fish) => fish.name);
+            if (SubmittedfishName === nextFishToName.name && isLast) {
+              handleFishInput({
+                checkUserInput: [true, userResults + 1, allFishes.length],
+              });
+            } else if (SubmittedfishName != nextFishToName.name && isLast) {
+              handleFishInput({
+                checkUserInput: [false, userResults, allFishes.length],
+              });
+            }
             getNexFish();
           }}
-          disabled={isLast}
           type="submit"
         />
       </form>
