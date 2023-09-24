@@ -1,88 +1,48 @@
 import "./styles/game-board.css";
-import { Images } from "../../assets/Images";
-import { Component } from "react";
-import { isClassFishNameCorrect } from "../../types";
+//import { Images } from "../../assets/Images";
+import { Component, FormEvent } from "react";
+//import { isClassFishNameCorrect } from "../../types";
 
-const initialFishes = [
-  {
-    name: "trout",
-    url: Images.trout,
-  },
-  {
-    name: "salmon",
-    url: Images.salmon,
-  },
-  {
-    name: "tuna",
-    url: Images.tuna,
-  },
-  {
-    name: "shark",
-    url: Images.shark,
-  },
-];
+type FishItem = {
+  name: string;
+  url: string;
+};
 
-export class ClassGameBoard extends Component<{
-  handleFishInput: (info: isClassFishNameCorrect) => void;
-}> {
+type ClassGameBoardProps = {
+  fishData: FishItem;
+  handleAnswer: (answer: string) => void;
+};
+
+export class ClassGameBoard extends Component<ClassGameBoardProps> {
   state = {
-    fishIndex: 0,
-    SubmittedfishName: "",
-    correctCount: 0,
-    incorrectCount: 0,
-  };
-
-  getNexFish = () => {
-    const isLast = this.state.fishIndex === initialFishes.length - 1;
-    isLast
-      ? this.setState({ fishIndex: this.state.fishIndex })
-      : this.setState({ fishIndex: this.state.fishIndex + 1 });
-    this.setState({ SubmittedfishName: (this.state.SubmittedfishName = "") });
+    fishInput: "",
   };
 
   render() {
-    const nextFishToName = initialFishes[this.state.fishIndex];
+    const { fishData, handleAnswer } = this.props;
+
+    const handleSubmit = (e: FormEvent) => {
+      e.preventDefault();
+      handleAnswer(this.state.fishInput);
+      this.setState({ fishInput: "" });
+    };
+
     return (
       <div id="game-board">
         <div id="fish-container">
-          <img src={nextFishToName.url} alt={nextFishToName.name} />
+          <img src={fishData.url} alt={fishData.name} />
         </div>
-        <form id="fish-guess-form">
+        <form id="fish-guess-form" onSubmit={handleSubmit}>
           <label htmlFor="fish-guess">What kind of fish is this?</label>
           <input
-            value={this.state.SubmittedfishName}
+            value={this.state.fishInput}
             onChange={(e) => {
-              this.setState({ SubmittedfishName: e.target.value });
+              this.setState({ fishInput: e.target.value });
             }}
             type="text"
             name="fish-guess"
           />
-          <input
-            onClick={(e) => {
-              e.preventDefault();
-              if (this.state.SubmittedfishName === nextFishToName.name) {
-                this.setState({ correctCount: (this.state.correctCount += 1) });
-                this.props.handleFishInput({
-                  checkUserInput: [
-                    this.state.correctCount,
-                    this.state.incorrectCount,
-                  ],
-                });
-              } else if (this.state.SubmittedfishName != nextFishToName.name) {
-                this.setState({
-                  incorrectCount: (this.state.incorrectCount += 1),
-                });
-                this.props.handleFishInput({
-                  checkUserInput: [
-                    this.state.correctCount,
-                    this.state.incorrectCount,
-                  ],
-                });
-              }
-              this.getNexFish();
-            }}
-            type="submit"
-          />
+          <input value={"submit"} type="submit" />
         </form>
       </div>
     );

@@ -1,27 +1,18 @@
 import { Component } from "react";
 
-const totalCount = 0;
-const correctCount = 0;
-
-export class ClassFinalScore extends Component<{
-  userResluts: [number, number] | null;
-}> {
+type ClassFinalScoreProps = {
+  correctCount: number;
+  totalCount: number;
+};
+export class ClassFinalScore extends Component<ClassFinalScoreProps> {
   render() {
     return (
       <div id="final-score">
         <h1>Your Final Score Was</h1>
         <div id="score">
-          <p>
-            {this.props.userResluts === null
-              ? correctCount
-              : this.props.userResluts[0]}
-          </p>
+          <p>{this.props.correctCount}</p>
           <hr />
-          <p>
-            {this.props.userResluts === null
-              ? totalCount
-              : this.props.userResluts[0] + this.props.userResluts[1]}
-          </p>
+          <p>{this.props.totalCount}</p>
         </div>
       </div>
     );

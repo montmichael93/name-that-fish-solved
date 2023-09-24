@@ -2,31 +2,66 @@ import { FunctionalGameBoard } from "./FunctionalGameBoard";
 import { FunctionalScoreBoard } from "./FunctionalScoreBoard";
 import { FunctionalFinalScore } from "./FunctionalFinalScore";
 import { useState } from "react";
-import { isFunctionalFishNameCorrect } from "../../types";
+import { Images } from "../../assets/Images";
+
+const initialFishes = [
+  {
+    name: "trout",
+    url: Images.trout,
+  },
+  {
+    name: "salmon",
+    url: Images.salmon,
+  },
+  {
+    name: "tuna",
+    url: Images.tuna,
+  },
+  {
+    name: "shark",
+    url: Images.shark,
+  },
+];
 
 export function FunctionalApp() {
-  const [userBoolean, setUserSubmition] =
-    useState<isFunctionalFishNameCorrect | null>(null);
+  const [correct, setCorrect] = useState(0);
+  const [incorrect, setIncorrect] = useState(0);
+
+  const fishIndex = correct + incorrect;
+  const isGameOver = initialFishes.length === fishIndex;
+  const answersLeft = initialFishes.map((fish) => fish.name).slice(fishIndex);
+
+  const handleAnswer = (answer: string) => {
+    if (initialFishes[fishIndex].name === answer) {
+      setCorrect(correct + 1);
+    } else {
+      setIncorrect(incorrect + 1);
+    }
+  };
 
   return (
     <>
-      {!Array.isArray(userBoolean?.checkUserInput) ||
-      !userBoolean?.checkUserInput ? (
-        <FunctionalScoreBoard isUserCorrect={userBoolean} />
-      ) : undefined}
+      {!isGameOver && (
+        <>
+          <FunctionalScoreBoard
+            correctCount={correct}
+            incorrectCount={incorrect}
+            answersLeft={answersLeft}
+          />
 
-      {!Array.isArray(userBoolean?.checkUserInput) ||
-      !userBoolean?.checkUserInput ? (
-        <FunctionalGameBoard
-          handleFishInput={(userSubmission) => {
-            setUserSubmition(userSubmission);
-          }}
+          <FunctionalGameBoard
+            fishData={initialFishes[fishIndex]}
+            handleAnswer={handleAnswer}
+          />
+        </>
+      )}
+
+      {isGameOver && (
+        <FunctionalFinalScore
+          correctCount={correct}
+          totalCount={initialFishes.length}
         />
-      ) : undefined}
-
-      {Array.isArray(userBoolean?.checkUserInput) ? (
-        <FunctionalFinalScore finalResult={userBoolean} />
-      ) : undefined}
+      )}
     </>
   );
 }
